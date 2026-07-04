@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>병무청 보도자료 Q&A</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  body { font-family: 'Noto Sans KR', sans-serif; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 9999px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .msg-in { animation: fadeIn 0.25s ease-out; }
+  .dot { animation: bounce 1.2s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.15s; }
+  .dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .4 } 30% { transform: translateY(-4px); opacity: 1 } }
+</style>
+</head>
+<body class="h-screen bg-zinc-950 text-zinc-100 flex overflow-hidden">
+
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden"></div>
+
+  <aside
+    id="sidebar"
+    class="fixed md:static inset-y-0 left-0 z-30 w-72 -translate-x-full md:translate-x-0 transition-transform duration-200 border-r border-zinc-800 bg-zinc-950 flex flex-col shrink-0"
+  >
+    <div class="px-4 py-4 border-b border-zinc-800 flex items-center justify-between">
+      <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide">대화 이력</p>
+      <button id="sidebar-close" class="md:hidden text-zinc-500 hover:text-zinc-300 h-6 w-6 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+      </button>
+    </div>
+    <div id="conversation-list" class="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1"></div>
+  </aside>
+
+  <div class="flex-1 flex flex-col min-w-0">
+    <header class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur px-4 sm:px-6 py-4 flex items-center gap-3 shrink-0">
+      <button id="sidebar-toggle" class="md:hidden h-9 w-9 shrink-0 flex items-center justify-center rounded-lg hover:bg-zinc-900 text-zinc-300">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75Zm0 5A.75.75 0 0 1 2.75 9h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 9.75Zm0 5a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-lg shrink-0">🪖</div>
+      <div class="min-w-0">
+        <h1 class="text-base font-semibold text-zinc-50 truncate">병무청 보도자료 Q&A</h1>
+        <p class="text-xs text-zinc-400 truncate">Naive RAG vs Advanced RAG 비교 · 새 문서 추가 시 실시간 자동 반영</p>
+      </div>
+      <div class="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">
+        <span class="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          실시간 감시 중
+        </span>
+        <button
+          id="new-chat-btn"
+          title="새 대화"
+          class="h-9 w-9 flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-emerald-500 border border-zinc-800 hover:border-emerald-500 text-zinc-300 hover:text-zinc-950 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="chat" class="flex-1 overflow-y-auto scrollbar-thin px-4 sm:px-8 py-6 space-y-5 max-w-5xl w-full mx-auto"></main>
+
+    <footer class="border-t border-zinc-800 bg-zinc-950 px-4 sm:px-8 py-4 shrink-0">
+      <form id="chat-form" class="max-w-5xl mx-auto flex items-end gap-2">
+        <textarea
+          id="query-input"
+          rows="1"
+          placeholder="병무청 보도자료에 대해 질문해보세요"
+          class="flex-1 resize-none rounded-xl bg-zinc-900 border border-zinc-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none px-4 py-3 text-sm placeholder-zinc-500 transition-colors"
+        ></textarea>
+        <button
+          type="submit"
+          id="send-btn"
+          class="shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-950 font-semibold h-11 w-11 flex items-center justify-center transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M3.4 2.5a.75.75 0 0 0-.94.94l1.4 4.9L10 10l-6.14 1.66-1.4 4.9a.75.75 0 0 0 .94.94l14-6.5a.75.75 0 0 0 0-1.36l-14-6.5Z"/></svg>
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

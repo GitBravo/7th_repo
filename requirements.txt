@@ -1,0 +1,8 @@
+openai
+supabase
+python-dotenv
+tqdm
+cohere
+watchdog
+fastapi
+uvicorn
